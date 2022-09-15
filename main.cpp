@@ -78,6 +78,8 @@ float lm35ReadingsSum      = 0.0;
 float lm35ReadingsArray[NUMBER_OF_AVG_SAMPLES];
 float lm35TempC            = 0.0;
 
+time_t tiempoEncendido; //@note tiempo en que enciendo el programa
+
 int accumulatedDebounceMatrixKeypadTime = 0;
 int matrixKeypadCodeIndex = 0;
 char matrixKeypadLastKeyPressed = '\0';
@@ -123,6 +125,7 @@ int main()
 {
     inputsInit();
     outputsInit();
+    tiempoEncendido=time(NULL); //@note guardo el tiempo en el que inicio el programa
     while (true) {
         alarmActivationUpdate();
         alarmDeactivationUpdate();
@@ -259,6 +262,11 @@ void uartTask()
     char receivedChar = '\0';
     char str[100];
     int stringLength;
+    char tiempo[5];
+    
+    sprintf(tiempo,"%i",time(NULL)-tiempoEncendido); //@note le resto al tiempo actual el tiempo que guarde cuando inicie y lo muestro
+    uartUsb.write(tiempo,5);
+
     if( uartUsb.readable() ) {
         uartUsb.read( &receivedChar, 1 );
         switch (receivedChar) {
